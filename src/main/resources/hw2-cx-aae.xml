@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+  <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+  <primitive>false</primitive>  
+  <delegateAnalysisEngineSpecifiers>
+    <delegateAnalysisEngine key="Tokenizer">
+      <import name="edu.cmu.cs.lti.cx.annotators.Tokenizer"/>
+    </delegateAnalysisEngine>
+    <delegateAnalysisEngine key="QuestionAnswerReader">
+      <import name="edu.cmu.cs.lti.cx.annotators.QuestionAnswerReader"/>
+    </delegateAnalysisEngine>
+    <delegateAnalysisEngine key="Ngram">
+      <import name="edu.cmu.cs.lti.cx.annotators.Ngram"/>
+    </delegateAnalysisEngine>
+    <delegateAnalysisEngine key="CosineScorer">
+      <import name="edu.cmu.cs.lti.cx.annotators.CosineScorer"/>
+    </delegateAnalysisEngine>
+    <delegateAnalysisEngine key="ResultAnalysis">
+      <import name="edu.cmu.cs.lti.cx.annotators.ResultAnalysis"/>
+    </delegateAnalysisEngine>
+  </delegateAnalysisEngineSpecifiers>
+  <analysisEngineMetaData>
+    <name>hw2-cx-aae</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+    <configurationParameters/>
+    <configurationParameterSettings/>
+    <flowConstraints>
+      <fixedFlow>
+        <node>Tokenizer</node>
+        <node>QuestionAnswerReader</node>
+        <node>Ngram</node>
+        <node>CosineScorer</node>
+        <node>ResultAnalysis</node>
+      </fixedFlow>
+    </flowConstraints>
+    <fsIndexCollection/>
+    <capabilities>
+      <capability>
+        <inputs/>
+        <outputs/>
+        <languagesSupported/>
+      </capability>
+    </capabilities>
+  <operationalProperties>
+      <modifiesCas>true</modifiesCas>
+      <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+      <outputsNewCASes>false</outputsNewCASes>
+    </operationalProperties>
+  </analysisEngineMetaData>
+  <resourceManagerConfiguration/>
+</analysisEngineDescription>
