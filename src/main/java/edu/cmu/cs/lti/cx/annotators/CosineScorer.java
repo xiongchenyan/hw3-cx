@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -18,6 +20,7 @@ import edu.cmu.deiis.types.AnswerScore;
 import edu.cmu.deiis.types.NGram;
 import edu.cmu.deiis.types.Question;
 
+import org.cleartk.ne.type.NamedEntityMention;
 
 /**
  * @author cx
@@ -53,23 +56,20 @@ public class CosineScorer extends JCasAnnotator_ImplBase {
 		//get question's tokens
 		Question question = JCasUtil.selectSingle(aJCas, Question.class);
 		List<NGram> lQNGram = new ArrayList<NGram> (JCasUtil.selectCovered(NGram.class, question));
-		List<List<NGram>> llQGram = GetNGrams(lQNGram);
-
-		
-		
-		
+		List<List<NGram>> llQGram = GetNGrams(lQNGram);		
+		List<NamedEntityMention> lQNE = new ArrayList<NamedEntityMention> (JCasUtil.selectCovered(NamedEntityMention.class,question));
 		for (Answer answer : JCasUtil.select(aJCas,Answer.class)) {
 			List<NGram> lANGram = new ArrayList<NGram> (JCasUtil.selectCovered(NGram.class,answer));	
 			List<List<NGram>> llAGram = GetNGrams(lANGram);
+			List<NamedEntityMention> lANE = new ArrayList<NamedEntityMention>  (JCasUtil.selectCovered(NamedEntityMention.class,answer));
 //			System.out.println(String.format("q[%s]\na[%s]", question.getCoveredText(),answer.getCoveredText()));
 			Double AnswerTotalScore = 0.0;
 			for (int i = 0; i < llQGram.size(); i ++)
 			{
 				AnswerTotalScore += lNGramWeight[i] * Cosine(llQGram.get(i),llAGram.get(i));	
-//				System.out.println(String.format("[%d] gram [%.2f], cosine [%.2f]",lNGramN[i],lNGramWeight[i],Cosine(llQGram.get(i),llAGram.get(i))));
-				
-				
+//				System.out.println(String.format("[%d] gram [%.2f], cosine [%.2f]",lNGramN[i],lNGramWeight[i],Cosine(llQGram.get(i),llAGram.get(i))));								
 			}
+			AnswerTotalScore += Cosine(lQNE,lANE);
 			AnswerScore ansScore = new AnswerScore(aJCas);
 			ansScore.setAnswer(answer);
 			ansScore.setScore(AnswerTotalScore);
@@ -100,6 +100,7 @@ public class CosineScorer extends JCasAnnotator_ImplBase {
 		return llNGram;		
 	}
 	
+	
 	/**
 	 * 
 	 * @param lA the list of annotation to be calculated by cosine. could be token, ngram, etc.
@@ -107,7 +108,7 @@ public class CosineScorer extends JCasAnnotator_ImplBase {
 	 * @return the cosine score of cos(lA,lB)
 	 * the cosine is conducted by the raw string of covered text for Annotation elements in two lists.
 	 */
-	private <T extends Annotation> Double Cosine(List<T> lA, List<T> lB) {
+	private <T extends AnnotationFS> Double Cosine(List<T> lA, List<T> lB) {
 		Double Res = 0.0;		
 		Map<String,Integer> hA = GetAnnotationCounts(lA);
 		Map<String,Integer> hB = GetAnnotationCounts(lB);
@@ -143,7 +144,7 @@ public class CosineScorer extends JCasAnnotator_ImplBase {
 	 * @param LT, the list of Annotations.
 	 * @return the vector model of lT. Constructed only on lT's raw strings.
 	 */
-	private <T extends Annotation> Map<String,Integer> GetAnnotationCounts(List<T> lT) {
+	private <T extends AnnotationFS> Map<String,Integer> GetAnnotationCounts(List<T> lT) {
 		if (lT.isEmpty()){
 			return null;
 		}

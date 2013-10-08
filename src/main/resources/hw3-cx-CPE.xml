@@ -16,6 +16,18 @@
         </collectionIterator>
     </collectionReader>
     <casProcessors casPoolSize="3" processingUnitThreadCount="1">
+        <casProcessor deployment="integrated" name="scnlp-cx-client.xml">
+            <descriptor>
+                <import location="scnlp-cx-client.xml"/>
+            </descriptor>
+            <deploymentParameters/>
+            <errorHandling>
+                <errorRateThreshold action="terminate" value="0/1000"/>
+                <maxConsecutiveRestarts action="terminate" value="30"/>
+                <timeout max="100000" default="-1"/>
+            </errorHandling>
+            <checkpoint batch="10000" time="1000ms"/>
+        </casProcessor>
         <casProcessor deployment="integrated" name="hw2-cx-aae">
             <descriptor>
                 <import location="hw2-cx-aae.xml"/>

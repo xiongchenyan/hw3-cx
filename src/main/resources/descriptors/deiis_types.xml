@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <name>deiis_types</name>
   <description/>
   <version>1.0</version>
   <vendor/>
+  <imports>
+    <import name="org.cleartk.TypeSystem"/>
+  </imports>
   <types>
     <typeDescription>
       <name>edu.cmu.deiis.types.Annotation</name>
